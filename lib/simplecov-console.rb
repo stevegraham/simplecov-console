@@ -8,20 +8,9 @@ class SimpleCov::Formatter::Console
 
   def format(result)
 
-    root = nil
-    if Module.const_defined? :ROOT then
-      root = ROOT
-    elsif Module.const_defined? :Rails then
-      root = Rails.root.to_s
-    end
-
     puts
     puts "COVERAGE: #{colorize(pct(result))} -- #{result.covered_lines}/#{result.total_lines} lines"
     puts
-
-    if root.nil? then
-      return
-    end
 
     files = result.files.sort{ |a,b| a.covered_percent <=> b.covered_percent }
 
@@ -31,7 +20,7 @@ class SimpleCov::Formatter::Console
       return
     end
 
-    table = files.map{ |f| { :file => f.filename.gsub(root + "/", ''), :coverage => pct(f) } }
+    table = files.map{ |f| { :file => f.filename.gsub(SimpleCov.root + "/", ''), :coverage => pct(f) } }
 
     if table.size > 15 then
       puts "showing bottom (worst) 15 of #{table.size} files"
@@ -43,7 +32,7 @@ class SimpleCov::Formatter::Console
     puts s.join("\n").gsub(/\d+\.\d+%/) { |m| colorize(m) }
 
     puts
-    puts "URL: file://#{root}/coverage/index.html"
+    puts "URL: file://#{SimpleCov.root}/coverage/index.html"
 
   end
 
